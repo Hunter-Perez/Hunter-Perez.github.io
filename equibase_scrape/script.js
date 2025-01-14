@@ -8,7 +8,7 @@ async function fetchData() {
     let scrapeddata = [];
     const pagecount = parseInt(document.getElementById("pagecount").value);
     for(let page = 1; page < pagecount+1; page++){
-      await fetch('https://www.equibase.com/Data.cfm/Stats/Horse/Year/Page?year=2025&page='+page+'&sort=EARNINGS&dir=A&list=N&category=A&attribute_total=1024&set=full&race_breed_type=TB&_=1736816741737')
+      await fetch('https://www.equibase.com/Data.cfm/Stats/Horse/Year/Page?year=2025&page='+page+'&sort=EARNINGS&dir=A&list=N&category=A&attribute_total=1024&set=full&race_breed_type=TB')
       .then(response => response.json())
       .then(data => {
         if(!totalrows)
