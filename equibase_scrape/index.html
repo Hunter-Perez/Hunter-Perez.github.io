@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Equibase Scraper</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <h1>Equibase Scraper</h1>
+  <label for="pagecount">Pages to pull</label>
+  <input type="number" id="pagecount" name="pagecount" min="1" max="100" value="10">
+  <button id="fetchDataButton">Fetch Data</button>
+  <button id="downloadCSVButton">Export Table</button>
+  <p id="num_retrieved"></p>
+  <p id="num_total"></p>
+  <table id="dataTable">
+    <thead>
+      <tr id="tableHeaders"></tr>
+    </thead>
+    <tbody id="tableBody"></tbody>
+  </table>
+
+  <script src="script.js"></script>
+</body>
+</html>
