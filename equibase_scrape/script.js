@@ -13,8 +13,6 @@ async function fetchData() {
       .then(data => {
         if(!totalrows)
           totalrows = data.total_rows;
-        console.log(data.stats);
-        console.log(page, pagecount);
         scrapeddata = scrapeddata.concat(data.stats);
       })
     }
@@ -25,6 +23,7 @@ async function fetchData() {
     document.getElementById("num_total").textContent = 'Total records: ' + totalrows;
   } catch (error) {
     console.error('Error fetching data:', error);
+    alert('Error fetching data.');
   }
 }
 
