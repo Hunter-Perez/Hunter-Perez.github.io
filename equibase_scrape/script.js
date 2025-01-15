@@ -13,7 +13,7 @@ async function fetchData() {
       .then(data => {
         if(!totalrows)
           totalrows = data.total_rows;
-        scrapeddata = scrapeddata.concat(data.stats);
+        scrapeddata = scrapeddata.concat(data.stats.slice(page === 1 ? 0 : 1));
       })
     }
 
