@@ -6,14 +6,63 @@
   <title>Equibase Scraper</title>
   <link rel="stylesheet" href="styles.css">
 </head>
-<body>
+<body onload="updateTotal()">
   <h1>Equibase Scraper</h1>
-  <label for="pagecount">Pages to pull</label>
-  <input type="number" id="pagecount" name="pagecount" min="1" max="100" value="10">
+
+  <label for="year">Year:</label>
+  <select id="year" name="year">
+    <option value="0">All Years</option>
+    <!-- Generate options from 2025 to 2000 -->
+    <script>
+      for (let year = 2025; year >= 2000; year--) {
+        document.write(`<option${year === 2024 ? ' selected' : ''} value="${year}">${year}</option>`);
+      }
+    </script>
+  </select>
+
+  <label for="foalingYear">Foaling Year:</label>
+  <select id="foalingYear" name="foalingYear">
+    <!-- Generate options from 2023 to 1998 -->
+    <script>
+      for (let year = 2023; year >= 1998; year--) {
+        document.write(`<option${year === 2022 ? ' selected' : ''} value="${year}">${year}</option>`);
+      }
+    </script>
+  </select>
+
+  <label for="breedType">Breed Type:</label>
+  <select id="breedType" name="breedType">
+    <option selected value="TB">Thoroughbred</option>
+    <option value="QH">Quarter Horse</option>
+  </select>
+
+  <label for="breedType">Breed Type:</label>
+  <select id="breedType" name="breedType">
+    <option selected value="TB">Thoroughbred</option>
+    <option value="QH">Quarter Horse</option>
+  </select>
+
+  <div id="pagecountContainer" style="display: none;">
+    <label for="pagecount">Pages to pull</label>
+    <input type="number" id="pagecount" name="pagecount" min="1" max="100" value="10">
+  </div>
+  <label for="allPages">
+    <input type="checkbox" id="allPages" name="allPages" checked>
+    All Pages
+  </label>
   <button id="fetchDataButton">Fetch Data</button>
-  <button id="downloadCSVButton">Export Table</button>
-  <p id="num_retrieved"></p>
+  <button hidden id="downloadCSVButton">Export Table</button>
+
+  <br>
+  <label for="agesList">Filters:</label>
+  <select id="agesList" class="scSelect"><option value="0">All Foals</option><option value="2048">North American Foals</option></select>
+  <select id="sexesList" class="scSelect"><option value="0">All Sexes</option><option value="1">Male</option><option value="2">Female</option></select>
+  <select id="surfacesList" class="scSelect"><option value="0">All Surfaces</option><option value="32">Dirt/All Weather</option><option value="64">Turf</option></select>
+  <select id="racetypesList" class="scSelect"><option value="0">All Races</option><option value="128">Stakes</option><option value="256">Graded Stakes</option></select>
+
+  <p hidden id="pagesLoading"></p>
   <p id="num_total"></p>
+  <p id="num_retrieved"></p>
   <table id="dataTable">
     <thead>
       <tr id="tableHeaders"></tr>

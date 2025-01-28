@@ -1,25 +1,78 @@
 document.getElementById('fetchDataButton').addEventListener('click', fetchData);
 document.getElementById('downloadCSVButton').addEventListener('click', tableToCSV);
+document.getElementById('allPages').addEventListener('click', handleAllPagesClick);
+
+document.getElementById("year").addEventListener('change', updateTotal);
+document.getElementById("foalingYear").addEventListener('change', updateTotal);
+document.getElementById("breedType").addEventListener('change', updateTotal);
+document.getElementById("agesList").addEventListener('change', updateTotal);
+document.getElementById("sexesList").addEventListener('change', updateTotal);
+document.getElementById("surfacesList").addEventListener('change', updateTotal);
+document.getElementById("racetypesList").addEventListener('change', updateTotal);
+
+function getURL(page){
+  const year = document.getElementById("year").value;
+  const foalingYear = document.getElementById("foalingYear").value;
+  const breed = document.getElementById("breedType").value;
+  const attribute_total = 1024 + parseInt(document.getElementById("agesList").value) + parseInt(document.getElementById("sexesList").value) + parseInt(document.getElementById("surfacesList").value) + parseInt(document.getElementById("racetypesList").value);
+  console.log(attribute_total);
+  return 'https://www.equibase.com/Data.cfm/Stats/FoalCrop/Year/Page?y='+year+'&page='+page+'&sort=EARNINGS&dir=A&list=N&category=A&attribute_total='+attribute_total+'&fy='+foalingYear+'&set=full&race_breed_type='+breed
+}
+async function updateTotal(){
+  await fetch(getURL(1))
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById("num_total").textContent = 'Total records: ' + (data.total_rows == '' ? 0 : data.total_rows);
+      })
+}
 
 async function fetchData() {
   try {
     let totalrows = null;
     document.getElementById('fetchDataButton').disabled = true;
+    document.getElementById('pagesLoading').hidden = false;
     let scrapeddata = [];
-    const pagecount = parseInt(document.getElementById("pagecount").value);
+    let pagecount = null;
+    if(document.getElementById("allPages").checked){
+      await fetch(getURL(1))
+      .then(response => response.json())
+      .then(data => {
+        totalrows = data.total_rows;
+        pagecount = Math.ceil(totalrows/100);
+      })
+    }else{
+      pagecount = parseInt(document.getElementById("pagecount").value);
+    }
+
+    let scrapeddataordered = {};
+
     for(let page = 1; page < pagecount+1; page++){
-      await fetch('https://www.equibase.com/Data.cfm/Stats/Horse/Year/Page?year=2025&page='+page+'&sort=EARNINGS&dir=A&list=N&category=A&attribute_total=1024&set=full&race_breed_type=TB')
+      //scrapeddata.push(await fetch('https://www.equibase.com/Data.cfm/Stats/Horse/Year/Page?year=2025&page='+page+'&sort=EARNINGS&dir=A&list=N&category=A&attribute_total=1024&set=full&race_breed_type=TB'));
+      scrapeddata.push(fetch(getURL(page))
       .then(response => response.json())
       .then(data => {
         if(!totalrows)
           totalrows = data.total_rows;
-        scrapeddata = scrapeddata.concat(data.stats.slice(page === 1 ? 0 : 1));
-      })
+        
+        scrapeddataordered[page] = data.stats.slice(page === 1 ? 0 : 1);
+        document.getElementById('pagesLoading').textContent = 'Fetched: '+(Object.keys(scrapeddataordered).length)+' of '+pagecount;
+        console.log(page);
+      }))
     }
 
-    populateTable(scrapeddata);
+    await Promise.all(scrapeddata);
+
+    let result = Array.prototype.concat.apply([],Object.values(scrapeddataordered))
+
+    console.log(result);
+
+
+    populateTable(result);
+    document.getElementById('pagesLoading').hidden = true;
+    document.getElementById('downloadCSVButton').hidden = false;
+    document.getElementById('pagesLoading').textContent = '';
     document.getElementById('fetchDataButton').disabled = false;
-    document.getElementById("num_retrieved").textContent = 'Retrieved records: ' + scrapeddata.length;
+    document.getElementById("num_retrieved").textContent = 'Retrieved records: ' + result.length;
     document.getElementById("num_total").textContent = 'Total records: ' + totalrows;
   } catch (error) {
     console.error('Error fetching data:', error);
@@ -61,6 +114,10 @@ function populateTable(data) {
     });
     tableBody.appendChild(tr);
   });
+}
+
+function handleAllPagesClick(){
+  document.getElementById('pagecountContainer').style = document.getElementById('allPages').checked ? 'display: none;' : 'display: inline;';
 }
 
 function tableToCSV() {
