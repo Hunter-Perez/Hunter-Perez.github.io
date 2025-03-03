@@ -97,10 +97,12 @@ function populateTable(data) {
   //const headers = Object.keys(data[0]);
 
   // Create table headers statically
-  const headers = ['rank', 'winPercentage', 'horseName', 'referenceNumber', 'earnings', 'place', 'sireReferenceNumber', 'starts', 'sireName', 'speedFigure', 'perStart', 'topThreePercentage', 'show', 'win', 'topThree', 'registry']
+  const headers = ['rank', 'horseName', 'sireName', 'starts', 'win', 'place', 'show', 'earnings', 'perStart', 'winPercentage', 'speedFigure']
+  //const headers = ['rank', 'winPercentage', 'horseName', 'referenceNumber', 'earnings', 'place', 'sireReferenceNumber', 'starts', 'sireName', 'speedFigure', 'perStart', 'topThreePercentage', 'show', 'win', 'topThree', 'registry']
   headers.forEach(header => {
     const th = document.createElement('th');
-    th.textContent = header;
+    const labelMap = {'rank': 'Rank', 'horseName': 'Horse Name', 'sireName': 'Sire Name', 'starts': 'Sts', 'win': '1st', 'place': '2nd', 'show': '3rd', 'earnings': 'Total $', 'perStart': 'Per Start $', 'winPercentage': 'Win%', 'speedFigure': 'Speed Figure'}
+    th.textContent = labelMap[header];
     tableHeaders.appendChild(th);
   });
 
